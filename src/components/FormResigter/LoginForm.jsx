@@ -9,8 +9,9 @@ import useAuth from "../../hooks/useAuth";
 const LoginForm = () => {
     const axiosCommon = useAxiosCommon();
     const navigate = useNavigate();
-    const { user, setUser, loading, setLoading } = useAuth();
-    console.log(user);
+    const { setUser, setLoading, signInUser } = useAuth();
+    const from = location?.state || '/dashboard'
+
     const {
         register,
         reset,
@@ -29,23 +30,21 @@ const LoginForm = () => {
             if (!emailUser.data && !phoneUser.data) {
                 toast.error('No user with that email or phone number')
                 reset();
+                setLoading(false)
                 return;
             }
             const loggedUser = emailUser.data || phoneUser.data;
-            if (loggedUser.password === password) {
-                toast.success('Login successfully')
-                setUser(loggedUser);
-                reset();
-                navigate('/dashboard');
-            }
-            else {
-                toast.error('No user with that email or phone number')
-                reset();
-                return;
-            }
 
-        } catch (err) {
+            const result = await signInUser(loggedUser?.email, password)
+            setUser(result.user)
+            navigate(from);
+            setLoading(false);
+            toast.success('login successfully');
+            setLoading(false);
+        }
+        catch (err) {
             toast.error(err.message);
+            setLoading(false);
         }
     }
     return (

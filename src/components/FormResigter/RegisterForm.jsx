@@ -7,12 +7,15 @@ import 'react-phone-input-2/lib/style.css'
 import useAxiosCommon from "../../hooks/useAxiosCommon";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../Firebase/firebase.config";
 import { useRef } from "react";
+import useAuth from "../../hooks/useAuth";
 const RegisterForm = () => {
     const axiosCommon = useAxiosCommon();
     const navigate = useNavigate();
     const phoneInputRef = useRef(null); // Create a ref for PhoneInput
-
+    const { setLoading } = useAuth();
     const {
         register,
         handleSubmit,
@@ -21,31 +24,52 @@ const RegisterForm = () => {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            phone: '', // Initialize the phone field with an empty value
+            phone: '',
         }
     })
 
     const onSubmit = async (data) => {
         const { email, password, phone, role } = data;
-        const newUser = { email, phone, password, role };
+        let balance;
+        if (role === 'user') {
+            balance = 40; // Example balance for admin
+        } else if (role === 'agent') {
+            balance = 1000; // Example balance for agent
+        }
+        const newUser = {
+            email, phone, password, role, balance, status: 'pending'
+        };
         console.log(newUser);
 
         try {
             const emailUser = await axiosCommon.get(`/user/${email}`);
             const phoneUser = await axiosCommon.get(`/user/phone/${phone}`)
 
-            if (emailUser || phoneUser) {
+            if (emailUser.data || phoneUser.data) {
                 toast.error('This user is in use. Please use different email of PhoneNumber')
                 resetForm();
+                setLoading(false);
                 return;
+            }
+            console.log(1, emailUser.data);
+            console.log(2, phoneUser.data);
+
+            const phoneEmail = `${phone}@gmail.com`;
+            console.log(phoneEmail);
+            const userWithEmail = await createUserWithEmailAndPassword(auth, email, password);
+            console.log(userWithEmail);
+            const userWithPhone = await createUserWithEmailAndPassword(auth, phoneEmail, password);
+            console.log(userWithPhone);
+            if (userWithPhone.user || userWithEmail.user) {
+                toast.success('user create successfully')
             }
             const { data } = await axiosCommon.post('/users', newUser)
             if (data.insertedId) {
                 toast.success('Registration Successful (-_-)');
                 resetForm();
                 navigate('/login')
+                setLoading(false)
             }
-            console.log('clicked');
         }
         catch (err) {
             console.log(err.message);

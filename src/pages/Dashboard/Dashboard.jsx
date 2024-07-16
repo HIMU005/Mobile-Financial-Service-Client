@@ -6,6 +6,7 @@ const Dashboard = () => {
     return (
         <div>
             <h2>I am dashboard</h2>
+
         </div>
     );
 };

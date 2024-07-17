@@ -51,15 +51,11 @@ const RegisterForm = () => {
                 setLoading(false);
                 return;
             }
-            console.log(1, emailUser.data);
-            console.log(2, phoneUser.data);
 
             const phoneEmail = `${phone}@gmail.com`;
-            console.log(phoneEmail);
             const userWithEmail = await createUserWithEmailAndPassword(auth, email, password);
-            console.log(userWithEmail);
             const userWithPhone = await createUserWithEmailAndPassword(auth, phoneEmail, password);
-            console.log(userWithPhone);
+
             if (userWithPhone.user || userWithEmail.user) {
                 toast.success('user create successfully')
             }

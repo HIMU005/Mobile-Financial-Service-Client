@@ -1,12 +1,18 @@
-import useAuth from "../../hooks/useAuth";
+// import useAuth from "../../hooks/useAuth";
+import useRole from "../../hooks/useRole";
+import AdminDashboard from "./Admin/AdminDashboard";
+import AgentDashboard from "./Agent/AgentDashboard";
+import UserDashboard from "./User/UserDashboard";
 
 const Dashboard = () => {
-    const { user } = useAuth();
-    console.log(user);
+
+    const [role, isLoading] = useRole(); if (isLoading) return <h2>Loading...</h2>
+
     return (
         <div>
-            <h2>I am dashboard</h2>
-
+            {role.role === 'admin' && <AdminDashboard />}
+            {role.role === 'user' && <UserDashboard />}
+            {role.role === 'agent' && <AgentDashboard />}
         </div>
     );
 };

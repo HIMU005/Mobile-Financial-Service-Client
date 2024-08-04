@@ -9,7 +9,7 @@ const Nav = ({ label }) => {
     return (
         <div className="flex justify-between items-center gap-3 bg-[#EC1C24] h-20">
             <button onClick={handlePrevious}><img src={arrow} alt="" /></button>
-            <h2 className=' text-lg font-semibold text-white'>{label}</h2>
+            <h2 className=' text-lg font-semibold text-white capitalize'>{label}</h2>
             <div></div>
         </div>
     );

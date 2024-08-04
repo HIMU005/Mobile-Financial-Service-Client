@@ -1,10 +1,13 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Nav from "../components/Nav";
 
 const DashboardLayOut = () => {
+    const location = useLocation();
+    const segments = location.pathname.split('/');
+    const route = segments[segments.length - 1];
     return (
         <div>
-            <Nav />
+            <Nav label={route} />
             <Outlet />
         </div>
     );

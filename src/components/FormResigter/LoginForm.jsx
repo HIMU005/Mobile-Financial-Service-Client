@@ -20,7 +20,7 @@ const LoginForm = () => {
     } = useForm()
 
     const onSubmit = async (data) => {
-        console.log(data);
+        // console.log(data);
         const { email, password } = data;
 
         try {
